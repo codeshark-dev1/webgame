@@ -6,4 +6,5 @@ body{
 
 #player{
     position: absolute;
+    z-index: 1;
 }

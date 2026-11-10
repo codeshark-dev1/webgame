@@ -1,6 +1,7 @@
 const moveAmount = 7;
 const player = document.getElementById("player");
 //same for enemy
+const coin = document.getElementById("coin");
 
 //screen bounds + offset so no glitching out of screen
 const screenWidth = window.innerWidth - moveAmount * 15;
@@ -8,6 +9,7 @@ const screenHeight = window.innerHeight - moveAmount * 15;
 
 //start player in middle of the screen
 player.style.transform = `translate(${String(screenWidth / 2)}px, ${String(screenHeight / 2)}px)`;
+randomizePosition(coin);
 
 //TODO: move this to dedicated helpers file
 function isNumber(number) {
@@ -28,6 +30,12 @@ function move(objectToMove, x, y){
     newY = clamp(rect.y + y, 0, screenHeight);
 
     objectToMove.style.transform = `translate(${String(newX)}px, ${String(newY)}px)`;
+}
+
+function randomizePosition(target){
+    randX = Math.random() * (screenWidth + 1);
+    randY = Math.random() * (screenHeight + 1);
+    target.style.transform = `translate(${String(randX)}px, ${String(randY)}px)`;
 }
 
 document.addEventListener("keydown", function (event){
