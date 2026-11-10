@@ -2,8 +2,14 @@ const moveAmount = 7;
 const player = document.getElementById("player");
 //same for enemy
 
-alert(window.innerWidth);
+//screen bounds + offset so no glitching out of screen
+const screenWidth = window.innerWidth - moveAmount * 15;
+const screenHeight = window.innerHeight - moveAmount * 15;
 
+//start player in middle of the screen
+player.style.transform = `translate(${String(screenWidth / 2)}px, ${String(screenHeight / 2)}px)`;
+
+//TODO: move this to dedicated helpers file
 function isNumber(number) {
   return typeof number === 'number' && !isNaN(number)
 }
@@ -18,8 +24,8 @@ function clamp(number, lower, upper) {
 
 function move(objectToMove, x, y){
     rect = objectToMove.getBoundingClientRect();
-    newX = rect.x + x;
-    newY = rect.y + y;
+    newX = clamp(rect.x + x, 0, screenWidth);
+    newY = clamp(rect.y + y, 0, screenHeight);
 
     objectToMove.style.transform = `translate(${String(newX)}px, ${String(newY)}px)`;
 }
@@ -28,6 +34,7 @@ document.addEventListener("keydown", function (event){
     if (event.defaultPrevented)
         return; //do nothing if the event was already handled
 
+    //todo: allow two key presses at once
     switch(event.key)
     {
         case "ArrowRight":
