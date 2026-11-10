@@ -1,0 +1,9 @@
+body{
+    background-color: #131313;
+    margin: 0;
+    padding: 0;
+}
+
+#player{
+    position: absolute;
+}
