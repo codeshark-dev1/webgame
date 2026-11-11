@@ -1,11 +1,14 @@
-const moveAmount = 7;
+const moveAmount = 10;
 const player = document.getElementById("player");
 //same for enemy
 const coin = document.getElementById("coin");
+const coinCounter = document.getElementById("score_counter");
+
+var coinsCollected = 0;
 
 //screen bounds + offset so no glitching out of screen
-const screenWidth = window.innerWidth - moveAmount * 15;
-const screenHeight = window.innerHeight - moveAmount * 15;
+const screenWidth = window.innerWidth - 105; //magic offset!
+const screenHeight = window.innerHeight - 105;
 
 //start player in middle of the screen
 move(player, screenWidth / 2, screenHeight / 2);
@@ -44,7 +47,7 @@ function clamp(number, lower, upper) {
     throw new Error('All inputs must be valid numbers.')
   }
   
-  return Math.min(Math.max(number, lower), upper)
+  return Math.min(Math.max(number, lower), upper);
 }
 
 function move(objectToMove, x, y){
@@ -53,12 +56,18 @@ function move(objectToMove, x, y){
     const newY = clamp(rect.y + y, 0, screenHeight);
 
     objectToMove.style.transform = `translate(${String(newX)}px, ${String(newY)}px)`;
+    // objectToMove.style.transform = 
 }
 
 function randomizePosition(target){
     const randX = Math.random() * (screenWidth + 1);
     const randY = Math.random() * (screenHeight + 1);
-    move(target, randX, randY);
+
+    move(target, Math.random() < 0.5 ? randX : -randX, Math.random() < 0.5 ? randY : -randY);
+}
+
+function updateCoinCounter(){
+    coinCounter.innerHTML = "Score: " + String(coinsCollected);
 }
 
 document.addEventListener("keydown", function (event){
@@ -82,5 +91,10 @@ document.addEventListener("keydown", function (event){
             break;
     }
 
-    console.log(isColliding(player, coin));
+    if (isColliding(player, coin)){
+        randomizePosition(coin);
+        coinsCollected++;
+        updateCoinCounter();
+    }
+    console.log(coinsCollected);
 });
