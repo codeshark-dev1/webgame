@@ -13,10 +13,17 @@ const coin = document.getElementById("coin");
 const coinCounter = document.getElementById("score_counter");
 var coinsCollected = 0;
 
+console.log("Screen size: " + screenWidth + " " + screenHeight);
+
 //start player in middle of the screen
-move(player, screenWidth / 2, screenHeight / 2);
-randomizePosition(coin);
-randomizePosition(enemy);
+initialize();
+
+function initialize(){
+    move(player, screenWidth / 2, screenHeight / 2);
+
+    randomizePosition(enemy);
+    randomizePosition(coin);
+}
 
 function move(elem, x, y){
     const rect = elem.getBoundingClientRect();
@@ -27,10 +34,18 @@ function move(elem, x, y){
 }
 
 function randomizePosition(elem){
-    const randX = Math.random() * (screenWidth + 1);
-    const randY = Math.random() * (screenHeight + 1);
+    let randX = Math.random() * (screenWidth - 50);
+    randX = maybeTurnNegative(randX);
 
-    move(elem, Math.random() < 0.5 ? randX : -randX, Math.random() < 0.5 ? randY : -randY);
+    let randY = Math.random() * (screenHeight - 50);
+    randY = maybeTurnNegative(randY);
+
+    move(elem, randX, randY);
+    console.log(`Moving ${elem.id}, to ${randX}, ${randY}`);
+}
+
+function maybeTurnNegative(value){
+    return Math.random() < 0.5 ? value : -value;
 }
 
 function handleEnemyMovement(){

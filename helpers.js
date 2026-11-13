@@ -21,7 +21,6 @@ function isColliding(elem1, elem2){
     return xDist + yDist <= rSum;
 }
 
-//TODO: move these to dedicated helpers file
 function isNumber(number) {
   return typeof number === 'number' && !isNaN(number)
 }

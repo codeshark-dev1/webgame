@@ -12,7 +12,11 @@ body{
     z-index: 2;
 }
 
-#player #enemy{
+.game_object{
     position: absolute;
     z-index: 1;
+}
+
+#coin{
+    z-index: 0;
 }
