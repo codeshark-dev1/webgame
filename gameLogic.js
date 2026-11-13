@@ -4,14 +4,16 @@
 //screen bounds + offset so no glitching out of screen
 const screenWidth = window.innerWidth - 105; //magic offset! (previous player move amount was 7, multiplied by 15 gives 105... woooo magic)
 const screenHeight = window.innerHeight - 105;
+const collisionsUpdateDelay = 50;
 
 //step size of moveable objects (e.g. the player)
-const moveStep = 12;
+const moveStep = 15;
 
 const player = document.getElementById("player");
 
 const enemy = document.getElementById("enemy");
-const lerpMoveMultiplier = 0.0005;
+const enemyMoveStep = 1.5;
+const enemyMoveDelay = 6; //ms
 
 const coin = document.getElementById("coin");
 const coinCounter = document.getElementById("score_counter");
@@ -29,7 +31,10 @@ function initialize(){
     randomizePosition(enemy);
     randomizePosition(coin);
     
-    window.setInterval(moveAToB, 15, enemy, player);
+    //start moving enemy to the player
+    window.setInterval(moveAToB, enemyMoveDelay, enemy, player);
+    //start handling collisions checks
+    window.setInterval(handleCollisions, collisionsUpdateDelay);
 }
 
 function randomizePosition(elem){
@@ -47,7 +52,6 @@ function maybeTurnNegative(value){
 }
 
 //work in progress name
-//linearly interpolates position of elem1 to position of elem2
 function moveAToB(elem1, elem2){
     if (elem1 == null || elem2 == null)
         return;
@@ -55,10 +59,9 @@ function moveAToB(elem1, elem2){
     const rect1 = elem1.getBoundingClientRect();
     const rect2 = elem2.getBoundingClientRect();
 
-    //maybe not make it linear because its not really what I want but its fine for now
-    let xMoveAmount = (rect2.x - rect1.x) * moveStep * lerpMoveMultiplier;
-    let yMoveAmount = (rect2.y - rect1.y) * moveStep * lerpMoveMultiplier;
-    move(elem1, xMoveAmount, yMoveAmount);
+    const dirX = rect2.x > rect1.x ? 1 : rect2.x == rect1.x ? 0 : -1;
+    const dirY = rect2.y > rect1.y ? 1 : rect2.y == rect1.y ? 0 : -1;
+    move(elem1, dirX * enemyMoveStep, dirY * enemyMoveStep);
 }
 
 function move(elem, x, y){
@@ -67,6 +70,19 @@ function move(elem, x, y){
     const newY = clamp(rect.y + y, 0, screenHeight);
 
     elem.style.transform = `translate(${String(newX)}px, ${String(newY)}px)`;
+}
+
+function handleCollisions(){
+    if (isColliding(player, enemy)){
+        window.location.reload(); //for now
+        //later: proper game over + save highscore and stuff
+    }
+
+    if (isColliding(player, coin)){
+        randomizePosition(coin);
+        coinsCollected++;
+        updateCoinCounter();
+    }
 }
 
 document.addEventListener("keydown", function (event){
@@ -98,10 +114,4 @@ document.addEventListener("keydown", function (event){
     }
 
     move(player, xMoveAmount, yMoveAmount);
-
-    if (isColliding(player, coin)){
-        randomizePosition(coin);
-        coinsCollected++;
-        updateCoinCounter();
-    }
 });
