@@ -33,29 +33,41 @@ function randomizePosition(elem){
     move(elem, Math.random() < 0.5 ? randX : -randX, Math.random() < 0.5 ? randY : -randY);
 }
 
+function handleEnemyMovement(){
+    //1) get rects of player and enemy
+    //2) calculate where to move to go towards player
+    //3) move enemy in that direction
+}
+
 document.addEventListener("keydown", function (event){
-    if (event.defaultPrevented)
-        return; //do nothing if the event was already handled
+    event.preventDefault();
+
+    if (event.key == "r")
+        window.location.reload();
+    else if (!event.key.startsWith("Arrow"))
+        return;
+
+    let xMoveAmount = 0;
+    let yMoveAmount = 0;
 
     //todo: allow two key presses at once
     switch(event.key)
     {
         case "ArrowRight":
-            move(player, moveAmount, 0);
+            xMoveAmount += moveAmount;
             break;
         case "ArrowLeft":
-            move(player, -moveAmount, 0);
+            xMoveAmount -= moveAmount;
             break;
         case "ArrowDown":
-            move(player, 0, moveAmount);
+            yMoveAmount += moveAmount;
             break;
         case "ArrowUp":
-            move(player, 0, -moveAmount);
-            break;
-        case "r":
-            window.location.reload();
+            yMoveAmount -= moveAmount;
             break;
     }
+
+    move(player, xMoveAmount, yMoveAmount);
 
     if (isColliding(player, coin)){
         randomizePosition(coin);
