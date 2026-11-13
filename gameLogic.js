@@ -5,7 +5,7 @@
 const screenWidth = window.innerWidth - 105; //magic offset! (previous player move amount was 7, multiplied by 15 gives 105... woooo magic)
 const screenHeight = window.innerHeight - 105;
 
-const moveAmount = 10;
+const moveAmount = 12;
 const player = document.getElementById("player");
 const enemy = document.getElementById("enemy");
 
