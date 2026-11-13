@@ -19,6 +19,10 @@ const coin = document.getElementById("coin");
 const coinCounter = document.getElementById("score_counter");
 let coinsCollected = 0;
 
+//VISUAL EFFECTS
+const playerTrailColors = ["#1863db", "#40C9FF", "#5c53ff"]
+const enemyTrailColors = ["#db1822", "#ff3f48", "#850a10"];
+
 initialize();
 
 function initialize(){
@@ -35,6 +39,30 @@ function initialize(){
     window.setInterval(moveAToB, enemyMoveDelay, enemy, player);
     //start handling collisions checks
     window.setInterval(handleCollisions, collisionsUpdateDelay);
+}
+
+function spawnTrail(elem, colors){
+    //https://www.youtube.com/watch?v=lywTnNbRmlM
+    
+    const rect = elem.getBoundingClientRect();
+
+    const trail = document.createElement("div");
+    trail.className = "trail";
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    trail.style.background = color;
+
+    const spread = 20;
+    const offsetX = (Math.random() - 0.5) * spread;
+    const offsetY = (Math.random() - 0.5) * spread;
+
+    trail.style.left = (rect.x + 50 + offsetX) + 'px';
+    trail.style.top = (rect.y + 50 + offsetY) + 'px';
+
+    document.body.appendChild(trail);
+
+    setTimeout(() => {
+        trail.remove();
+    }, 800);
 }
 
 function randomizePosition(elem){
@@ -73,6 +101,8 @@ function move(elem, x, y){
 }
 
 function handleCollisions(){
+    spawnTrail(enemy, enemyTrailColors);
+
     if (isColliding(player, enemy)){
         window.location.reload(); //for now
         //later: proper game over + save highscore and stuff
@@ -114,4 +144,5 @@ document.addEventListener("keydown", function (event){
     }
 
     move(player, xMoveAmount, yMoveAmount);
+    spawnTrail(player, playerTrailColors);
 });
