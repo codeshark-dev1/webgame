@@ -7,7 +7,7 @@ const screenHeight = window.innerHeight - 105;
 const collisionsUpdateDelay = 50;
 
 //step size of moveable objects (e.g. the player)
-const moveStep = 15;
+const playerMoveSpeed = 400;
 
 const player = document.getElementById("player");
 
@@ -115,34 +115,30 @@ function handleCollisions(){
     }
 }
 
-document.addEventListener("keydown", function (event){
-    event.preventDefault();
+//keep track of state of each key
+const keys = {};
+document.addEventListener("keydown", e => {keys[e.key] = true; });
+document.addEventListener("keyup", e => {keys[e.key] = false; });
 
-    if (event.key == "r")
-        window.location.reload();
-    else if (player == null || coin == null || !event.key.startsWith("Arrow"))
-        return;
+let lastFrame = performance.now();
+function gameLoop(){
+    const now = performance.now();
+    const deltaTime = (now - lastFrame) / 1000;
+    lastFrame = now;
 
-    let xMoveAmount = 0;
-    let yMoveAmount = 0;
+    let dx = 0;
+    let dy = 0;
 
-    //todo: allow two key presses at once
-    switch(event.key)
-    {
-        case "ArrowRight":
-            xMoveAmount += moveStep;
-            break;
-        case "ArrowLeft":
-            xMoveAmount -= moveStep;
-            break;
-        case "ArrowDown":
-            yMoveAmount += moveStep;
-            break;
-        case "ArrowUp":
-            yMoveAmount -= moveStep;
-            break;
+    if (keys["ArrowRight"]) dx += playerMoveSpeed * deltaTime;
+    if (keys["ArrowLeft"]) dx -= playerMoveSpeed * deltaTime;
+    if (keys["ArrowDown"]) dy += playerMoveSpeed * deltaTime;
+    if (keys["ArrowUp"]) dy -= playerMoveSpeed * deltaTime;
+
+    if (dx || dy){
+        move(player, dx, dy);
+        spawnTrail(player, playerTrailColors);
     }
 
-    move(player, xMoveAmount, yMoveAmount);
-    spawnTrail(player, playerTrailColors);
-});
+    requestAnimationFrame(gameLoop);
+}
+requestAnimationFrame(gameLoop);
