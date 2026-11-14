@@ -12,22 +12,30 @@ const playerMoveSpeed = 400;
 const player = document.getElementById("player");
 
 const enemy = document.getElementById("enemy");
-const enemyMoveStep = 1.5;
+let enemyMoveSpeed = 1;
+const maxEnemyMoveSpeed = 2.5;
+const enemyMoveSpeedIncrease = 0.05;
 const enemyMoveDelay = 6; //ms
 
 const coin = document.getElementById("coin");
 const coinCounter = document.getElementById("score_counter");
 let coinsCollected = 0;
 
+const highscoreCounter = document.getElementById("highscore_counter");
+let highscore = 0;
+
 //VISUAL EFFECTS
 const playerTrailColors = ["#1863db", "#40C9FF", "#5c53ff"]
 const enemyTrailColors = ["#db1822", "#ff3f48", "#850a10"];
 
-initialize();
+startGame();
 
-function initialize(){
+function startGame(){
     if (player == null || enemy == null || coin == null)
         return;
+
+    highscore = Number(localStorage.getItem("highscore"));
+    updateHighscoreCounter();
 
     //start player in middle of the screen
     move(player, screenWidth / 2, screenHeight / 2);
@@ -35,6 +43,10 @@ function initialize(){
     randomizePosition(enemy);
     randomizePosition(coin);
     
+    //maybe move this to game loop?
+    //but then I will have to manually implement a (call) delay
+    //we'll see...
+
     //start moving enemy to the player
     window.setInterval(moveAToB, enemyMoveDelay, enemy, player);
     //start handling collisions checks
@@ -43,7 +55,6 @@ function initialize(){
 
 function spawnTrail(elem, colors){
     //https://www.youtube.com/watch?v=lywTnNbRmlM
-    
     const rect = elem.getBoundingClientRect();
 
     const trail = document.createElement("div");
@@ -89,7 +100,9 @@ function moveAToB(elem1, elem2){
 
     const dirX = rect2.x > rect1.x ? 1 : rect2.x == rect1.x ? 0 : -1;
     const dirY = rect2.y > rect1.y ? 1 : rect2.y == rect1.y ? 0 : -1;
-    move(elem1, dirX * enemyMoveStep, dirY * enemyMoveStep);
+    move(elem1, dirX * enemyMoveSpeed, dirY * enemyMoveSpeed);
+
+    spawnTrail(enemy, enemyTrailColors);
 }
 
 function move(elem, x, y){
@@ -100,18 +113,31 @@ function move(elem, x, y){
     elem.style.transform = `translate(${String(newX)}px, ${String(newY)}px)`;
 }
 
-function handleCollisions(){
-    spawnTrail(enemy, enemyTrailColors);
+function updateHighscoreCounter(){
+    highscore = Math.max(coinsCollected, highscore);
+    
+    highscoreCounter.innerHTML = `Highscore: ${highscore}`;
+    localStorage.setItem("highscore", highscore);
+}
 
+function updateCoins() {
+    coinsCollected++;
+    updateCoinCounter();
+    updateHighscoreCounter();
+
+    enemyMoveSpeed = Math.min(enemyMoveSpeed + enemyMoveSpeedIncrease, maxEnemyMoveSpeed);
+
+    randomizePosition(coin);
+}
+
+function handleCollisions(){
     if (isColliding(player, enemy)){
         window.location.reload(); //for now
         //later: proper game over + save highscore and stuff
     }
 
     if (isColliding(player, coin)){
-        randomizePosition(coin);
-        coinsCollected++;
-        updateCoinCounter();
+        updateCoins();
     }
 }
 

@@ -8,21 +8,31 @@
     src: url("resources/fonts/Silkscreen-Bold.ttf");
 }
 
+*{
+    cursor: none;
+}
+
 body{
     background-color: #131313;
     margin: 0;
     padding: 0;
     font-family: "silkscreen";
     overflow: hidden;
-    cursor: none;
 }
 
-#score_counter{
+h1, h2{
     position: absolute;
     color: white;
     text-align: left;
-    margin: 5px 0px 0px 15px;
     z-index: 2;
+}
+
+#score_counter{
+    margin: 5px 0px 0px 15px;
+}
+
+#highscore_counter{
+    margin: 40px 0px 0px 15px;
 }
 
 .game_object{
