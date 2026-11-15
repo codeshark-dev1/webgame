@@ -132,8 +132,7 @@ function updateCoins() {
 
 function handleCollisions(){
     if (isColliding(player, enemy)){
-        window.location.reload(); //for now
-        //later: proper game over + save highscore and stuff
+        window.location.href = "index.html";
     }
 
     if (isColliding(player, coin)){
@@ -159,6 +158,9 @@ function gameLoop(){
     if (keys["ArrowLeft"]) dx -= playerMoveSpeed * deltaTime;
     if (keys["ArrowDown"]) dy += playerMoveSpeed * deltaTime;
     if (keys["ArrowUp"]) dy -= playerMoveSpeed * deltaTime;
+
+    if (keys["Escape"] || keys["r"])
+        window.location.href = "index.html";
 
     if (dx || dy){
         move(player, dx, dy);
